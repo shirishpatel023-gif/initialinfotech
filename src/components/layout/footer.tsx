@@ -19,6 +19,8 @@ const services = [
 
 export async function Footer() {
   const company = await getCompanyInfo();
+  const phones = company.contactPhone ? company.contactPhone.split(",").map((p) => p.trim()) : [];
+  const emails = company.contactEmail ? company.contactEmail.split(",").map((e) => e.trim()) : [];
 
   return (
     <footer className="border-t border-[var(--color-line)] bg-white">
@@ -53,21 +55,33 @@ export async function Footer() {
 
             {/* Contact info */}
             <ul className="mt-4 space-y-2 text-sm text-[var(--color-muted)]">
-              <li className="flex items-center gap-2">
-                <MapPin className="h-4 w-4 shrink-0 text-[var(--color-accent)]" />
-                Bardoli, Gujarat, India
+              <li className="flex items-start gap-2">
+                <MapPin className="h-4 w-4 shrink-0 mt-0.5 text-[var(--color-accent)]" />
+                <span>
+                  {company.address}, {company.city}, {company.region} - {company.postalCode}
+                </span>
               </li>
-              <li className="flex items-center gap-2">
+              <li className="flex flex-wrap items-center gap-x-2 gap-y-1">
                 <Phone className="h-4 w-4 shrink-0 text-[var(--color-accent)]" />
-                <a href={`tel:${company.contactPhone}`} className="hover:text-[var(--color-accent)] transition-colors">
-                  {company.contactPhone}
-                </a>
+                {phones.map((phone, idx) => (
+                  <span key={phone} className="inline-flex items-center">
+                    <a href={`tel:${phone.replace(/\s+/g, "")}`} className="hover:text-[var(--color-accent)] transition-colors">
+                      {phone}
+                    </a>
+                    {idx < phones.length - 1 && <span className="text-[var(--color-line)] ml-2">|</span>}
+                  </span>
+                ))}
               </li>
-              <li className="flex items-center gap-2">
+              <li className="flex flex-wrap items-center gap-x-2 gap-y-1">
                 <Mail className="h-4 w-4 shrink-0 text-[var(--color-accent)]" />
-                <a href={`mailto:${company.contactEmail}`} className="hover:text-[var(--color-accent)] transition-colors">
-                  {company.contactEmail}
-                </a>
+                {emails.map((email, idx) => (
+                  <span key={email} className="inline-flex items-center">
+                    <a href={`mailto:${email}`} className="hover:text-[var(--color-accent)] transition-colors">
+                      {email}
+                    </a>
+                    {idx < emails.length - 1 && <span className="text-[var(--color-line)] ml-2">|</span>}
+                  </span>
+                ))}
               </li>
             </ul>
           </div>

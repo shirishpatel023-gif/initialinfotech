@@ -10,6 +10,7 @@ export default async function AdminEmployeesPage() {
   const serialized = employees.map(e => ({
     ...e,
     designation: e.designation || "",
+    employeeNumber: e.employeeNumber || "",
     photoUrl: e.photoUrl || "",
     phone: e.phone || "",
     dob: e.dob.toISOString().slice(0, 10),

@@ -30,6 +30,7 @@ export async function POST(request: Request) {
       data: {
         name: payload.name,
         slug: slugify(payload.name),
+        employeeNumber: payload.employeeNumber || null,
         designation: payload.designation || null,
         photoUrl: payload.photoUrl || null,
         dob: new Date(payload.dob),
@@ -69,6 +70,7 @@ export async function PATCH(request: Request) {
       data: {
         name: payload.name,
         slug: slugify(payload.name),
+        employeeNumber: payload.employeeNumber || null,
         designation: payload.designation || null,
         photoUrl: payload.photoUrl || null,
         dob: new Date(payload.dob),

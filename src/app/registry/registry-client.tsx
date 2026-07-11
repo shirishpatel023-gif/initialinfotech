@@ -12,6 +12,7 @@ type Employee = {
   id: string;
   name: string;
   slug: string;
+  employeeNumber: string | null;
   designation: string | null;
   photoUrl: string | null;
   dob: string;
@@ -28,7 +29,7 @@ export function RegistryClient({ employees }: { employees: Employee[] }) {
   const [filter, setFilter] = useState<Filter>("all");
 
   const filtered = employees.filter((e) => {
-    const matchesSearch = [e.name, e.personalEmail, e.designation ?? ""]
+    const matchesSearch = [e.name, e.personalEmail, e.designation ?? "", e.employeeNumber ?? ""]
       .join(" ")
       .toLowerCase()
       .includes(query.toLowerCase());
@@ -82,19 +83,20 @@ export function RegistryClient({ employees }: { employees: Employee[] }) {
           {filtered.map((employee) => (
             <div key={employee.id} className="section-card rounded-[1.8rem] p-5">
               <div className="flex items-start gap-4">
-                <Image
+                <img
                   src={employee.photoUrl || "https://placehold.co/160x160/0d1b31/e8f0ff?text=II"}
                   alt={employee.name}
-                  width={80}
-                  height={80}
                   className="h-20 w-20 rounded-2xl object-cover"
                 />
                 <div className="min-w-0">
                   <p className="font-mono text-xl font-semibold text-[var(--color-text)]">
                     {employee.name}
                   </p>
+                  {employee.employeeNumber && (
+                    <p className="text-xs font-mono text-[var(--color-muted)] mt-0.5">#{employee.employeeNumber}</p>
+                  )}
                   {employee.designation && (
-                    <p className="mt-0.5 text-sm font-medium text-[var(--color-accent)]">
+                    <p className="mt-1 text-sm font-medium text-[var(--color-accent)]">
                       {employee.designation}
                     </p>
                   )}

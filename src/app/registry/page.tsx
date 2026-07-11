@@ -49,6 +49,7 @@ export default async function RegistryPage() {
           id: e.id,
           name: e.name,
           slug: e.slug,
+          employeeNumber: e.employeeNumber ?? null,
           designation: e.designation ?? null,
           photoUrl: e.photoUrl ?? null,
           dob: e.dob.toISOString(),

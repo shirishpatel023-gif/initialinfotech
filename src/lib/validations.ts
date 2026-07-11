@@ -14,7 +14,7 @@ export const companyInfoSchema = z.object({
   aboutBody: z.string().min(20),
   mission: z.string().min(20),
   globalReach: z.string().min(20),
-  contactEmail: z.email(),
+  contactEmail: z.string().min(5),
   contactPhone: z.string().min(6),
   googleMapsEmbedUrl: z.url(),
 });
@@ -30,6 +30,7 @@ export const serviceSchema = z.object({
 export const employeeSchema = z.object({
   id: z.string().optional(),
   name: z.string().min(3, "Name must be at least 3 characters long"),
+  employeeNumber: z.string().optional().or(z.literal("")),
   designation: z.string().optional(),
   photoUrl: z.url().optional().or(z.literal("")),
   dob: z.string().min(1, "Date of birth is required"),

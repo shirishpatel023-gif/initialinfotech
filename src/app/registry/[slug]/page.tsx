@@ -35,15 +35,20 @@ export default async function EmployeeProfilePage({
     <div className="page-shell py-14">
       <div className="section-card rounded-[2rem] p-7 md:p-10">
         <div className="grid gap-8 lg:grid-cols-[220px_1fr]">
-          <Image
+          <img
             src={employee.photoUrl || "https://placehold.co/320x320/0d1b31/e8f0ff?text=II"}
             alt={employee.name}
-            width={320}
-            height={320}
             className="h-56 w-full rounded-[1.75rem] object-cover"
           />
           <div>
-            <Badge>{employee.isActive ? "Currently Working" : "Former Employee"}</Badge>
+            <div className="flex flex-wrap items-center gap-3">
+              <Badge>{employee.isActive ? "Currently Working" : "Former Employee"}</Badge>
+              {employee.employeeNumber && (
+                <span className="text-xs font-mono font-bold uppercase tracking-wider text-[var(--color-muted)] border border-[var(--color-line)] rounded-full px-2.5 py-0.5 bg-[var(--color-paper)]">
+                  ID: {employee.employeeNumber}
+                </span>
+              )}
+            </div>
             <h1 className="mt-4 font-mono text-4xl font-semibold text-[var(--color-text)]">{employee.name}</h1>
             {employee.designation && (
               <p className="mt-1 text-base font-medium text-[var(--color-accent)]">{employee.designation}</p>

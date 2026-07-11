@@ -10,6 +10,8 @@ export const metadata = {
 
 export default async function ContactPage() {
   const company = await getCompanyInfo();
+  const phones = company.contactPhone ? company.contactPhone.split(",").map((p) => p.trim()) : [];
+  const emails = company.contactEmail ? company.contactEmail.split(",").map((e) => e.trim()) : [];
 
   return (
     <div className="page-shell py-14">
@@ -26,17 +28,31 @@ export default async function ContactPage() {
               <div className="flex items-start gap-3">
                 <MapPin className="mt-1 h-4 w-4 text-[var(--color-accent)]" />
                 <span>
-                  {company.address}, {company.city}, {company.region} {company.postalCode},{" "}
+                  {company.address}, {company.city}, {company.region} - {company.postalCode},{" "}
                   {company.country}
                 </span>
               </div>
-              <div className="flex items-center gap-3">
+              <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
                 <Mail className="h-4 w-4 text-[var(--color-accent)]" />
-                <span>{company.contactEmail}</span>
+                {emails.map((email, idx) => (
+                  <span key={email} className="inline-flex items-center">
+                    <a href={`mailto:${email}`} className="hover:text-[var(--color-accent)] transition-colors">
+                      {email}
+                    </a>
+                    {idx < emails.length - 1 && <span className="text-[var(--color-line)] ml-2">|</span>}
+                  </span>
+                ))}
               </div>
-              <div className="flex items-center gap-3">
+              <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
                 <Phone className="h-4 w-4 text-[var(--color-accent)]" />
-                <span>{company.contactPhone}</span>
+                {phones.map((phone, idx) => (
+                  <span key={phone} className="inline-flex items-center">
+                    <a href={`tel:${phone.replace(/\s+/g, "")}`} className="hover:text-[var(--color-accent)] transition-colors">
+                      {phone}
+                    </a>
+                    {idx < phones.length - 1 && <span className="text-[var(--color-line)] ml-2">|</span>}
+                  </span>
+                ))}
               </div>
             </div>
           </div>

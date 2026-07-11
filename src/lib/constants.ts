@@ -3,7 +3,7 @@ import { BriefcaseBusiness, BrainCircuit, CodeXml, Globe2, Smartphone } from "lu
 export const companyDefaults = {
   id: "primary",
   companyName: "Initial Infotech",
-  tagline: "Custom software and mobile app development for ambitious businesses.",
+  tagline: "Website development | Desktop development | Mobile application",
   address: "Suthar Faliya Road, J P Nagar",
   city: "Bardoli",
   region: "Gujarat",
@@ -18,8 +18,8 @@ export const companyDefaults = {
     "We build high-trust digital products that help organizations move faster, serve customers better, and scale with confidence.",
   globalReach:
     "Our teams work from Bardoli with delivery standards aligned to global product companies, supporting clients across industries and geographies.",
-  contactEmail: "hello@initialinfotech.com",
-  contactPhone: "+91 97200 00000",
+  contactEmail: "initialinfotech@gmail.com, contact@initialinfotech.com",
+  contactPhone: "+91 9099460498, +91 9727713885",
   googleMapsEmbedUrl:
     "https://www.google.com/maps?q=Suthar%20Faliya%20Road%2C%20J%20P%20Nagar%2C%20Bardoli%2C%20Gujarat%20394601%2C%20India&output=embed",
 };
@@ -59,6 +59,7 @@ export const fallbackEmployees = [
     id: "employee-1",
     name: "Aarav Desai",
     slug: "aarav-desai",
+    employeeNumber: "EMP-2101",
     photoUrl:
       "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=900&q=80",
     dob: new Date("1996-06-18"),
@@ -74,6 +75,7 @@ export const fallbackEmployees = [
     id: "employee-2",
     name: "Mira Patel",
     slug: "mira-patel",
+    employeeNumber: "EMP-2204",
     photoUrl:
       "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=900&q=80",
     dob: new Date("1998-11-02"),

@@ -1,14 +1,17 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { RichTextEditor } from "@/components/rich-text-editor";
+import { Upload, X, Loader2 } from "lucide-react";
+import Image from "next/image";
 
 type EmployeePayload = {
   id?: string;
   name: string;
+  employeeNumber: string;
   designation: string;
   photoUrl: string;
   dob: string;
@@ -22,6 +25,7 @@ type EmployeePayload = {
 
 const blankEmployee: EmployeePayload = {
   name: "",
+  employeeNumber: "",
   designation: "",
   photoUrl: "",
   dob: "",
@@ -32,6 +36,111 @@ const blankEmployee: EmployeePayload = {
   dutiesHtml: "<p></p>",
   isActive: true,
 };
+
+function EmployeePhotoUpload({
+  value,
+  onChange,
+  disabled,
+}: {
+  value: string;
+  onChange: (url: string) => void;
+  disabled?: boolean;
+}) {
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const response = await fetch("/api/admin/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to upload image");
+      }
+
+      const data = await response.json();
+      onChange(data.url);
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Error uploading file");
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  return (
+    <div className="flex flex-col gap-2 rounded-[1.5rem] border border-[var(--color-line)] bg-white px-4 py-3">
+      <label className="text-xs font-semibold uppercase tracking-wider text-[var(--color-text)]">
+        Employee Photo
+      </label>
+      
+      <div className="flex items-center gap-4 mt-1">
+        {/* Preview Frame */}
+        <div className="relative flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-[var(--color-line)] bg-[var(--color-bg-alt)]">
+          {value ? (
+            <img 
+              src={value} 
+              alt="Employee preview" 
+              className="h-full w-full object-cover" 
+            />
+          ) : (
+            <Upload className="h-5 w-5 text-[var(--color-muted)]" />
+          )}
+
+          {isUploading && (
+            <div className="absolute inset-0 flex items-center justify-center bg-black/40 backdrop-blur-[1px]">
+              <Loader2 className="h-5 w-5 animate-spin text-white" />
+            </div>
+          )}
+        </div>
+
+        {/* Upload buttons */}
+        <div className="flex flex-col gap-1.5">
+          <input
+            type="file"
+            ref={fileInputRef}
+            className="hidden"
+            accept="image/png, image/jpeg, image/webp"
+            onChange={handleFileChange}
+            disabled={disabled || isUploading}
+          />
+          <div className="flex gap-2">
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={disabled || isUploading}
+            >
+              Choose file
+            </Button>
+            {value && (
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={() => onChange("")}
+                disabled={disabled || isUploading}
+              >
+                <X className="h-4 w-4 text-rose-500" />
+              </Button>
+            )}
+          </div>
+          <span className="text-[10px] text-[var(--color-muted)]">
+            PNG, JPEG, WebP (Max 4MB)
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export function EmployeesClient({ initialEmployees }: { initialEmployees: EmployeePayload[] }) {
   const [employees, setEmployees] = useState(initialEmployees);
@@ -98,7 +207,7 @@ export function EmployeesClient({ initialEmployees }: { initialEmployees: Employ
               <div className="flex items-start justify-between">
                 <div>
                   <p className="font-mono text-lg font-semibold text-[var(--color-text)]">
-                    {e.name}
+                    {e.name} {e.employeeNumber && <span className="text-xs text-[var(--color-muted)] font-normal ml-2">({e.employeeNumber})</span>}
                   </p>
                   {e.designation && (
                     <p className="mt-0.5 text-sm font-medium text-[var(--color-accent)]">{e.designation}</p>
@@ -139,14 +248,19 @@ export function EmployeesClient({ initialEmployees }: { initialEmployees: Employ
             onChange={(event) => setForm({ ...form, name: event.target.value })}
           />
           <Input
+            placeholder="Employee ID (e.g. EMP-001)"
+            value={form.employeeNumber || ""}
+            onChange={(event) => setForm({ ...form, employeeNumber: event.target.value })}
+          />
+          <Input
             placeholder="Designation (e.g. Senior Developer)"
             value={form.designation}
             onChange={(event) => setForm({ ...form, designation: event.target.value })}
           />
-          <Input
-            placeholder="Photo URL"
+          <EmployeePhotoUpload
             value={form.photoUrl}
-            onChange={(event) => setForm({ ...form, photoUrl: event.target.value })}
+            onChange={(url) => setForm({ ...form, photoUrl: url })}
+            disabled={busy}
           />
           <Input
             type="date"

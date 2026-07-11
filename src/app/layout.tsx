@@ -4,6 +4,7 @@ import { Toaster } from "sonner";
 
 import { Footer } from "@/components/layout/footer";
 import { Header } from "@/components/layout/header";
+import { LocationBar } from "@/components/layout/location-bar";
 
 import "./globals.css";
 
@@ -47,6 +48,7 @@ export default function RootLayout({
       <body className="min-h-full bg-[var(--color-ink)] text-[var(--color-text)]">
         <div className="site-shell">
           <Header />
+          <LocationBar />
           <main className="flex-1">{children}</main>
           <Footer />
         </div>
