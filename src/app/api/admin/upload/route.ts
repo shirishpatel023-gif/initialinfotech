@@ -46,7 +46,15 @@ export async function POST(request: Request) {
       });
       return NextResponse.json({ url: blob.url });
     } else {
-      // Fallback local path: Save to public/uploads/employees
+      // If we are on Vercel and token is missing, throw a friendly configuration error
+      if (process.env.VERCEL) {
+        return NextResponse.json(
+          { error: "Vercel Blob: BLOB_READ_WRITE_TOKEN is missing in Vercel project settings." },
+          { status: 400 }
+        );
+      }
+
+      // Fallback local path (local development only): Save to public/uploads/employees
       const bytes = await file.arrayBuffer();
       const buffer = Buffer.from(bytes);
       
