@@ -12,8 +12,13 @@ export async function getCompanyInfo(): Promise<CompanyInfo> {
     return companyDefaults as CompanyInfo;
   }
 
-  const company = await prisma.companyInfo.findUnique({ where: { id: "primary" } });
-  return (company ?? companyDefaults) as CompanyInfo;
+  try {
+    const company = await prisma.companyInfo.findUnique({ where: { id: "primary" } });
+    return (company ?? companyDefaults) as CompanyInfo;
+  } catch (error) {
+    console.warn("Database lookup failed, falling back to defaults:", error);
+    return companyDefaults as CompanyInfo;
+  }
 }
 
 export async function getServices(): Promise<Service[]> {
@@ -21,7 +26,12 @@ export async function getServices(): Promise<Service[]> {
     return fallbackServices as Service[];
   }
 
-  return prisma.service.findMany({ orderBy: [{ order: "asc" }, { title: "asc" }] });
+  try {
+    return await prisma.service.findMany({ orderBy: [{ order: "asc" }, { title: "asc" }] });
+  } catch (error) {
+    console.warn("Database lookup failed, falling back to services default:", error);
+    return fallbackServices as Service[];
+  }
 }
 
 export async function getEmployees(): Promise<Employee[]> {
@@ -29,7 +39,12 @@ export async function getEmployees(): Promise<Employee[]> {
     return fallbackEmployees as Employee[];
   }
 
-  return prisma.employee.findMany({ orderBy: [{ isActive: "desc" }, { name: "asc" }] });
+  try {
+    return await prisma.employee.findMany({ orderBy: [{ isActive: "desc" }, { name: "asc" }] });
+  } catch (error) {
+    console.warn("Database lookup failed, falling back to employees default:", error);
+    return fallbackEmployees as Employee[];
+  }
 }
 
 export async function getEmployeeBySlug(slug: string) {
@@ -37,7 +52,12 @@ export async function getEmployeeBySlug(slug: string) {
     return (fallbackEmployees as Employee[]).find((employee) => employee.slug === slug) ?? null;
   }
 
-  return prisma.employee.findUnique({ where: { slug } });
+  try {
+    return await prisma.employee.findUnique({ where: { slug } });
+  } catch (error) {
+    console.warn(`Database lookup failed for employee slug ${slug}, using fallback:`, error);
+    return (fallbackEmployees as Employee[]).find((employee) => employee.slug === slug) ?? null;
+  }
 }
 
 export async function getContactInquiries(): Promise<ContactInquiry[]> {
@@ -45,5 +65,10 @@ export async function getContactInquiries(): Promise<ContactInquiry[]> {
     return [];
   }
 
-  return prisma.contactInquiry.findMany({ orderBy: { createdAt: "desc" } });
+  try {
+    return await prisma.contactInquiry.findMany({ orderBy: { createdAt: "desc" } });
+  } catch (error) {
+    console.warn("Database lookup failed for inquiries, using empty list:", error);
+    return [];
+  }
 }
